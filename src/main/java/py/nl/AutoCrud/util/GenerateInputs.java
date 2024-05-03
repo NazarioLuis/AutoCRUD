@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -40,7 +41,7 @@ public class GenerateInputs<T> {
 
 	@SuppressWarnings("unchecked")
 	public void build() {
-		String search = "";
+		String searchPlaceholder = "";
 		int row = 0;
 		int column = 0;
 		int columnCount = crud.getColumnCount();
@@ -78,10 +79,10 @@ public class GenerateInputs<T> {
 					label.setText(inputAnnotation.label().toUpperCase());
 				}
 
-				if (search.isEmpty() && field.getType() == String.class)
-					search = label.getText();
+				if (searchPlaceholder.isEmpty() && field.getType() == String.class)
+					searchPlaceholder = label.getText();
 				else if (field.getType() == String.class)
-					search += ", " + label.getText();
+					searchPlaceholder += ", " + label.getText();
 
 				if (requiredInput != null) {
 					label.setText(label.getText() + "(*)");
@@ -112,6 +113,8 @@ public class GenerateInputs<T> {
 						for (int i = 0; i < inputAnnotation.data().length; i++) {
 							((JComboBox<Object>) campo).addItem(inputAnnotation.data()[i]);
 						}
+					}else if(oComp.isAssignableFrom(JTextField.class)) {
+						((JTextField) campo).setColumns(15); 
 					}
 				}
 
@@ -132,7 +135,7 @@ public class GenerateInputs<T> {
 		tableModel = new GenericTableModel<T>(fields);
 		crud.getTable().setModel(tableModel);
 
-		addSearchFieldPlaceholder(search);
+		addSearchFieldPlaceholder(searchPlaceholder);
 	}
 
 	private void addSearchFieldPlaceholder(String text) {
@@ -152,6 +155,10 @@ public class GenerateInputs<T> {
 			rw[i] = (i < row) ? 0 : Double.MIN_VALUE;
 		}
 		gbl_form.rowWeights = rw;
+		gbl_form.columnWeights = new double[columnCount];
+		for (int i = 0; i < gbl_form.columnWeights.length; i++) {
+			gbl_form.columnWeights[i] = i%2==0 ? 0.0 : 1.0;
+		}
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = column;
 		gbc.gridy = row;

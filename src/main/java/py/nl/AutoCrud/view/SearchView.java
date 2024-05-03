@@ -2,6 +2,7 @@ package py.nl.AutoCrud.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -17,8 +18,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import py.nl.AutoCrud.annotations.EntityCRUD;
+import py.nl.AutoCrud.annotations.Input;
+import py.nl.AutoCrud.components.TextPrompt;
 import py.nl.AutoCrud.controller.SearchController;
-import py.nl.AutoCrud.controller.SearchViewListener;
+import py.nl.AutoCrud.interfaces.SearchViewListener;
+import py.nl.AutoCrud.util.TextUtil;
 
 public class SearchView <T> extends JDialog {
 
@@ -29,6 +34,8 @@ public class SearchView <T> extends JDialog {
 	private GenericTableModel<T> tableModel;
 	private Class<T> entityClass;
 	private SearchController<T> controller;
+	private String searchPlaceholder;
+	private EntityCRUD entityCRUD;
 	
 	public void setListener(SearchViewListener listener) {
 		controller.setListener(listener);
@@ -36,6 +43,7 @@ public class SearchView <T> extends JDialog {
 	
 	public SearchView(Class<T> entityClass) {
 		this.entityClass = entityClass;
+		entityCRUD = entityClass.getAnnotation(EntityCRUD.class);
 		fields = getAllFields(new ArrayList<Field>(), entityClass);
 		buildView();
 		addController();
@@ -44,8 +52,8 @@ public class SearchView <T> extends JDialog {
 	public void buildView() {
 		setModal(true);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		int ancho = (int) Math.round(screenSize.getWidth() * 0.5);
-		int alto = (int) Math.round(screenSize.getHeight() * 0.5);
+		int ancho = (int) Math.round(screenSize.getWidth() * ((double) entityCRUD.width() / 100) * 0.5);
+		int alto = (int) Math.round(screenSize.getHeight() * ((double) entityCRUD.width() / 100) * 0.5);
 		setBounds(100, 100, ancho, alto);
 		setLocationRelativeTo(this);
 		getContentPane().setLayout(new BorderLayout(0, 0));
@@ -62,6 +70,18 @@ public class SearchView <T> extends JDialog {
 		panel.add(searchField);
 		searchField.setColumns(10);
 		
+		for(Field field: fields) {
+			Input inputAnnotation = field.getAnnotation(Input.class);
+			searchPlaceholder = "";
+			if (inputAnnotation == null || inputAnnotation.label().isEmpty() || field.getType() == String.class) {
+				searchPlaceholder = TextUtil.generateLabel(field.getName());
+			} else if (field.getType() == String.class){
+				searchPlaceholder = inputAnnotation.label().toUpperCase();
+			}
+		}
+		
+		addSearchFieldPlaceholder(searchPlaceholder);
+		
 		JScrollPane scrollPane = new JScrollPane();
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 		
@@ -70,7 +90,15 @@ public class SearchView <T> extends JDialog {
 		
 		tableModel = new GenericTableModel<T>(fields);
 		table.setModel(tableModel);
+		
+		
 
+	}
+	
+	private void addSearchFieldPlaceholder(String text) {
+		TextPrompt placeholder = new TextPrompt(text, searchField);
+		placeholder.changeAlpha(0.75f);
+		placeholder.changeStyle(Font.ITALIC);
 	}
 
 	public JTextField getSearchField() {

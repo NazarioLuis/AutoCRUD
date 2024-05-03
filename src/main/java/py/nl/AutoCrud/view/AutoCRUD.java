@@ -2,7 +2,6 @@ package py.nl.AutoCrud.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,6 +44,7 @@ public class AutoCRUD<T> extends JDialog {
 	private EntityCRUD entityCRUD;
 	private AutoController<T> controller;
 	private List<Field> fields;
+	private JLabel sep3;
 
 	public AutoCRUD(Class<T> entityClass) {
 		this.entityClass = entityClass;
@@ -131,11 +131,16 @@ public class AutoCRUD<T> extends JDialog {
 		gbc_toolbarB.gridx = 1;
 		gbc_toolbarB.gridy = 2;
 		getContentPane().add(toolbarB, gbc_toolbarB);
-		toolbarB.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 5));
+		toolbarB.setLayout(new BoxLayout(toolbarB, BoxLayout.X_AXIS));
 
 		btnSave = new IconButton("Save");
 		btnSave.setBackground(new Color(234, 255, 213));
 		toolbarB.add(btnSave);
+		
+		sep3 = new JLabel("");
+		sep3.setPreferredSize(new Dimension(10, 10));
+		sep3.setMaximumSize(new Dimension(10, 10));
+		toolbarB.add(sep3);
 
 		btnCancel = new IconButton("Cancel");
 		btnCancel.setBackground(new Color(224, 224, 224));

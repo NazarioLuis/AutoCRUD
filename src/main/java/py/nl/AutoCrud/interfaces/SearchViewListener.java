@@ -1,4 +1,4 @@
-package py.nl.AutoCrud.controller;
+package py.nl.AutoCrud.interfaces;
 
 public interface SearchViewListener {
 	

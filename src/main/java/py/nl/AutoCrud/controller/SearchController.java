@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import py.nl.AutoCrud.dao.AutoDAO;
+import py.nl.AutoCrud.interfaces.SearchViewListener;
 import py.nl.AutoCrud.view.GenericTableModel;
 import py.nl.AutoCrud.view.SearchView;
 
