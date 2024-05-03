@@ -51,7 +51,7 @@ public class AutoCRUD<T> extends JDialog {
 		entityCRUD = entityClass.getAnnotation(EntityCRUD.class);
 		fields = getAllFields(new ArrayList<Field>(), entityClass);
 		buildView();
-		addController(this);
+		addController();
 	}
 
 	private void buildView() {
@@ -63,6 +63,8 @@ public class AutoCRUD<T> extends JDialog {
 		setTitle(entityCRUD.title());
 
 		setLocationRelativeTo(this);
+		
+		setModal(true);
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 10, 400, 0, 400, 0, 0 };
@@ -94,7 +96,7 @@ public class AutoCRUD<T> extends JDialog {
 		btnAdd = new IconButton("Add");
 		btnAdd.setBackground(new Color(234, 255, 213));
 		toolbarA.add(btnAdd);
-		
+
 		JLabel sep1 = new JLabel("");
 		sep1.setMaximumSize(new Dimension(0, 10));
 		toolbarA.add(sep1);
@@ -102,7 +104,7 @@ public class AutoCRUD<T> extends JDialog {
 		btnEdit = new IconButton("Edit");
 		btnEdit.setBackground(new Color(198, 227, 227));
 		toolbarA.add(btnEdit);
-		
+
 		JLabel sep2 = new JLabel("");
 		sep2.setMaximumSize(new Dimension(0, 10));
 		toolbarA.add(sep2);
@@ -138,7 +140,7 @@ public class AutoCRUD<T> extends JDialog {
 		btnCancel = new IconButton("Cancel");
 		btnCancel.setBackground(new Color(224, 224, 224));
 		toolbarB.add(btnCancel);
-		
+
 		JPanel panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.anchor = GridBagConstraints.NORTH;
@@ -148,14 +150,14 @@ public class AutoCRUD<T> extends JDialog {
 		gbc_panel.gridy = 2;
 		getContentPane().add(panel, gbc_panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		
+
 		JLabel lblSearch = new JLabel("");
 		lblSearch.setIcon(new ImageIcon(AutoCRUD.class.getResource("/img/search.png")));
 		panel.add(lblSearch);
-		
-				searchField = new JTextField();
-				panel.add(searchField);
-				searchField.setColumns(10);
+
+		searchField = new JTextField();
+		panel.add(searchField);
+		searchField.setColumns(10);
 
 		new GenerateInputs<T>(this).build();
 	}
@@ -169,7 +171,7 @@ public class AutoCRUD<T> extends JDialog {
 		return fields;
 	}
 
-	private void addController(AutoCRUD<T> autoCRUD) {
+	private void addController() {
 		controller = new AutoController<T>(this);
 	}
 

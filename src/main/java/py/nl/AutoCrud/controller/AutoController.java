@@ -18,6 +18,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import py.nl.AutoCrud.annotations.Input;
 import py.nl.AutoCrud.annotations.RequiredInput;
+import py.nl.AutoCrud.components.SearchTextField;
 import py.nl.AutoCrud.dao.AutoDAO;
 import py.nl.AutoCrud.enums.Components;
 import py.nl.AutoCrud.util.FormUtil;
@@ -85,6 +86,7 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 	}
 
 	private void add() {
+		clear();
 		initState(false);
 		try {
 			fillForm(crud.getEntityClass().getDeclaredConstructor().newInstance());
@@ -115,6 +117,7 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 		
 		try {
 			obj = fillData(obj);
+			System.out.println(obj.toString());
 		} catch (Exception e1) {
 			if(e1.getClass()!=RuntimeException.class) e1.printStackTrace();
 			return;
@@ -125,6 +128,7 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 			filter();
 			clear();
 		} catch (Exception e) {
+			e.printStackTrace();
 			Throwable exc = e.getCause();
 			if (exc.getClass() == ConstraintViolationException.class) {
 				MessageUtil.error(exc.getCause().getMessage(), crud);
@@ -140,7 +144,7 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 			Field field = crud.getField(inputs.get(i).getName());
 			Input inputAnnotation = field.getAnnotation(Input.class);
 			RequiredInput requiredInput = field.getAnnotation(RequiredInput.class);
-			Components oComp = Components.valueOf(WraperUtil.wrap(field.getType()).getSimpleName());
+			
 			
 			String label;
 			if(inputAnnotation==null || inputAnnotation.label().isEmpty()){
@@ -157,7 +161,10 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 			Object value = null;
 			if (inputs.get(i).getClass()==JComboBox.class) {
 				value = ((JComboBox<Object>)inputs.get(i)).getSelectedItem();
-			}else{
+			}else if (inputs.get(i).getClass()==SearchTextField.class){
+				value = ((SearchTextField<Object>)inputs.get(i)).getValue();
+			}else {
+				Components oComp = Components.valueOf(WraperUtil.wrap(field.getType()).getSimpleName());
 				value = oComp.getValue(inputs.get(i));
 			}
 			
@@ -179,13 +186,15 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 		
 		for (int i = 0; i < inputs.size(); i++) {
 			Field field = crud.getField(inputs.get(i).getName());
-			Components oComp = Components.valueOf(WraperUtil.wrap(field.getType()).getSimpleName());
 			
 			Object valor = GetterAndSetterUtil.callGetter(obj, field);
 			
 			if (inputs.get(i).getClass()==JComboBox.class) {
 				((JComboBox<Object>)inputs.get(i)).setSelectedItem(valor);
-			}else {
+			}else if (inputs.get(i).getClass()==SearchTextField.class){
+				((SearchTextField<Object>)inputs.get(i)).setValue(valor);
+			} else{
+				Components oComp = Components.valueOf(WraperUtil.wrap(field.getType()).getSimpleName());
 				oComp.setValue(inputs.get(i),valor);
 			}
 		}

@@ -18,7 +18,9 @@ import javax.swing.border.EmptyBorder;
 
 import py.nl.AutoCrud.annotations.HiddenInput;
 import py.nl.AutoCrud.annotations.Input;
+import py.nl.AutoCrud.annotations.Relationship;
 import py.nl.AutoCrud.annotations.RequiredInput;
+import py.nl.AutoCrud.components.SearchTextField;
 import py.nl.AutoCrud.components.TextPrompt;
 import py.nl.AutoCrud.enums.Components;
 import py.nl.AutoCrud.view.AutoCRUD;
@@ -35,7 +37,7 @@ public class GenerateInputs<T> {
 		this.crud = crud;
 		fields = crud.getFields();
 	}
-		
+
 	@SuppressWarnings("unchecked")
 	public void build() {
 		String search = "";
@@ -46,19 +48,22 @@ public class GenerateInputs<T> {
 			Input inputAnnotation = field.getAnnotation(Input.class);
 			HiddenInput hiddenInput = field.getAnnotation(HiddenInput.class);
 			RequiredInput requiredInput = field.getAnnotation(RequiredInput.class);
-			
+			Relationship relationship = field.getAnnotation(Relationship.class);
 
 			if (!field.getName().equals("id") && hiddenInput == null) {
 				Class<?> oComp = null;
 
-				if (inputAnnotation!=null && inputAnnotation.data().length > 1) {
+				if (inputAnnotation != null && inputAnnotation.data().length > 1) {
 					oComp = JComboBox.class;
-				} else if (inputAnnotation!=null && inputAnnotation.longText()) {
+				} else if (inputAnnotation != null && inputAnnotation.longText()) {
 					if (field.getType() == String.class)
 						oComp = JTextArea.class;
 					else {
-						System.err.println("The 'longText' prop can only be used with a String. Please verify the entities.");
+						System.err.println(
+								"The 'longText' prop can only be used with a String. Please verify the entities.");
 					}
+				} else if (relationship != null) {
+					oComp = SearchTextField.class;
 				} else {
 					oComp = Components.valueOf(WraperUtil.wrap(field.getType()).getSimpleName()).getInputType();
 				}
@@ -67,7 +72,7 @@ public class GenerateInputs<T> {
 				label.setBorder(new EmptyBorder(3, 5, 3, 3));
 				label.setHorizontalAlignment(SwingConstants.RIGHT);
 
-				if (inputAnnotation==null || inputAnnotation.label().isEmpty()) {
+				if (inputAnnotation == null || inputAnnotation.label().isEmpty()) {
 					label.setText(TextUtil.generateLabel(field.getName()));
 				} else {
 					label.setText(inputAnnotation.label().toUpperCase());
@@ -78,39 +83,44 @@ public class GenerateInputs<T> {
 				else if (field.getType() == String.class)
 					search += ", " + label.getText();
 
-				if (requiredInput!=null) {
+				if (requiredInput != null) {
 					label.setText(label.getText() + "(*)");
 				}
 
 				JComponent campo = null;
-				try {
-					campo = (JComponent) oComp.getDeclaredConstructor().newInstance();
-				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-					e.printStackTrace();
-					return;
-				}
-				campo.setName(field.getName());
+				if (oComp == SearchTextField.class) {
+					campo = new SearchTextField<>(field);
+					campo.setName(field.getName());
+				} else {
+					try {
+						campo = (JComponent) oComp.getDeclaredConstructor().newInstance();
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+							| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+						e.printStackTrace();
+						return;
+					}
+					campo.setName(field.getName());
 
-				if (oComp == JTextArea.class) {
-					row++;
-					column = 0;
-					((JTextArea) campo).setRows(3);
-					((JTextArea) campo).setLineWrap(true);
-					JScrollPane sc = new JScrollPane(campo);
-					campo = sc;
-				} else if (oComp == JComboBox.class) {
-					for (int i = 0; i < inputAnnotation.data().length; i++) {
-						((JComboBox<Object>) campo).addItem(inputAnnotation.data()[i]);
+					if (oComp == JTextArea.class) {
+						row++;
+						column = 0;
+						((JTextArea) campo).setRows(3);
+						((JTextArea) campo).setLineWrap(true);
+						JScrollPane sc = new JScrollPane(campo);
+						campo = sc;
+					} else if (oComp == JComboBox.class) {
+						for (int i = 0; i < inputAnnotation.data().length; i++) {
+							((JComboBox<Object>) campo).addItem(inputAnnotation.data()[i]);
+						}
 					}
 				}
 
 				addInput(row, column, 0, 1, label);
 				column++;
 				int ancho = (inputAnnotation != null && inputAnnotation.longText()) ? columnCount - 1 : 1;
-				
+
 				addInput(row, column, 1, ancho, campo);
-				column+=ancho;
+				column += ancho;
 
 				if (column == columnCount) {
 					row++;
@@ -119,7 +129,6 @@ public class GenerateInputs<T> {
 			}
 		}
 
-		
 		tableModel = new GenericTableModel<T>(fields);
 		crud.getTable().setModel(tableModel);
 

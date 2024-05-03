@@ -15,11 +15,14 @@ public class FormUtil {
 			clear(comps[i]);
 		}
 	}
+	@SuppressWarnings("unchecked")
 	private static void clear(Component comp) {
 		String className = comp.getClass().getName();
 		String nombre_super= comp.getClass().getSuperclass().getName();
 		if (className.equals("javax.swing.JTextField")||nombre_super.equals("javax.swing.JTextField")) {
-			((javax.swing.JTextField) comp).setText("");;
+			((javax.swing.JTextField) comp).setText("");
+		} else if(className.equals("py.nl.AutoCrud.components.SearchTextField")) {
+			((py.nl.AutoCrud.components.SearchTextField<Object>) comp).setValue(null);
 		} else if (className.equals("javax.swing.JComboBox")||nombre_super.equals("javax.swing.JComboBox")) {
 			((javax.swing.JComboBox<?>) comp).setSelectedIndex(0);
 		} else if (className.equals("javax.swing.JTextArea")||nombre_super.equals("javax.swing.JTextArea")) {
@@ -34,6 +37,7 @@ public class FormUtil {
 		else if (className.equals("javax.swing.JCheckBox")||nombre_super.equals("javax.swing.JCheckBox")) {
 			((javax.swing.JCheckBox) comp).setSelected(false);
 		}
+		
 	}
 	
 	public static void manageFocus(Container cont){
@@ -70,6 +74,7 @@ public class FormUtil {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static boolean isEmpty(Component comp) {
 		String className = comp.getClass().getName();
 		String nombre_super = comp.getClass().getSuperclass().getName();
@@ -83,6 +88,8 @@ public class FormUtil {
 		}
 		else if (className.equals("javax.swing.JFormattedTextField")||nombre_super.equals("javax.swing.JFormattedTextField")) {
 			return ((javax.swing.JFormattedTextField) comp).getValue() == null;
+		}else if (className.equals("py.nl.AutoCrud.components.SearchTextField")) {
+			return ((py.nl.AutoCrud.components.SearchTextField<Object>) comp).getValue() == null;
 		}
 		return false;
 	}
