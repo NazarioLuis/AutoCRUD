@@ -16,6 +16,7 @@ import py.nl.AutoCrud.annotations.HiddenInput;
 import py.nl.AutoCrud.annotations.Input;
 import py.nl.AutoCrud.annotations.RequiredInput;
 import py.nl.AutoCrud.annotations.EntityCRUD;
+import py.nl.AutoCrud.annotations.Relationship;
 
 @Entity
 @EntityCRUD(
@@ -52,10 +53,50 @@ public class Customer {
     @Input(tableColumn = true)
     private boolean active;
 
+    @RequiredInput
+    @ManyToOne
+    @Relationship(displayInForm = ":name") // Add the relationship with City
+    private City city; // Define the relationship with City
+
     public Customer() {
         // Set default values for fields
         registrationDate = new Date();
         active = true;
+    }
+
+    // Getters and setters omitted for brevity
+}
+```
+Here we've added the `@ManyToOne` relationship with `City` in the `Customer` class, along with the `@Relationship` annotation to customize how this relationship is displayed in the generated form.
+
+#### Definition of the `City` Entity:
+
+```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import py.nl.AutoCrud.annotations.Input;
+import py.nl.AutoCrud.annotations.RequiredInput;
+import py.nl.AutoCrud.annotations.EntityCRUD;
+
+@Entity
+@EntityCRUD(
+    title = "City CRUD",
+    formTitle = "City information",
+    width = 60,
+    height = 60
+)
+public class City {
+    
+    @Id
+    @GeneratedValue
+    private int id;
+
+    @RequiredInput
+    @Input(tableColumn = true)
+    private String name;
+
+    public City() {
     }
 
     // Getters and setters omitted for brevity
@@ -81,6 +122,11 @@ This annotation indicates that the annotated field should be hidden in the graph
 
 #### `@RequiredInput`
 This annotation marks the annotated field as required in the graphical interface. It ensures that users must provide a value for the field when interacting with the interface, helping to maintain data integrity and completeness.
+#### `@Relationship`
+This annotation is used to define relationships between entities in the graphical interface.
+
+- `displayInForm`: Specifies how the relationship is displayed in the form. For example, `:lastname, :name` can be used to display the lastname and name attributes of the related entity as a string.
+
 ### 3. Usage of GUI Generation
 
 Once you've defined your entity classes and annotated them appropriately, you can use the provided functionality to generate graphical interfaces for CRUD operations. Here's an example of how to create a view for the "Customer" entity:
