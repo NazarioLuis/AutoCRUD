@@ -7,7 +7,7 @@
 
 	<groupId>py.nl</groupId>
 	<artifactId>AutoCrud</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>AutoCRUD</name>
 
@@ -30,4 +30,12 @@
 			<version>0.10.2</version>
 		</dependency>
 	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/NazarioLuis/AutoCRUD</url>
+		</repository>
+	</distributionManagement>
 </project>
