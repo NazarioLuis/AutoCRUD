@@ -1,8 +1,19 @@
 # Hibernate Connection Library with GUI Generation
 
 This library streamlines Java application development by effortlessly generating graphical interfaces from defined entity classes. It seamlessly integrates with the Hibernate framework to provide database connectivity, with a primary focus on creating intuitive interfaces for managing database entities.
-
-## 1. Definition of Entity Classes
+## 1. Hibernate configuration
+To configure Hibernate for your project, create a `hibernate.properties` file and add the following settings:
+```properties
+hibernate.connection.url=jdbc:postgresql://localhost:5432/database
+hibernate.connection.driver_class=org.postgresql.Driver
+hibernate.connection.username=postgres
+hibernate.connection.password=123
+hibernate.current_session_context_class=thread
+hibernate.show_sql=true
+hibernate.hbm2ddl.auto=update
+mapping_packages=package_name.entities
+```
+## 2. Definition of Entity Classes
 
 To utilize the graphical interface generation functionality, define your entity classes representing tables in your database. Annotations can be applied to these classes and their fields to customize the behavior and appearance of the generated interfaces.
 
@@ -102,7 +113,7 @@ public class City {
     // Getters and setters omitted for brevity
 }
 ```
-### 2. Explanation of Annotations
+### 3. Explanation of Annotations
 
 #### `@EntityCRUD`
 - `title`: Specifies the title of the CRUD (Create, Read, Update, Delete) interface generated for the entity. It typically appears at the top of the interface, providing a clear indication of what kind of records the interface deals with.
@@ -127,7 +138,7 @@ This annotation is used to define relationships between entities in the graphica
 
 - `displayInForm`: Specifies how the relationship is displayed in the form. For example, `:lastname, :name` can be used to display the lastname and name attributes of the related entity as a string.
 
-### 3. Usage of GUI Generation
+### 4. Usage of GUI Generation
 
 Once you've defined your entity classes and annotated them appropriately, you can use the provided functionality to generate graphical interfaces for CRUD operations. Here's an example of how to create a view for the "Customer" entity:
 
