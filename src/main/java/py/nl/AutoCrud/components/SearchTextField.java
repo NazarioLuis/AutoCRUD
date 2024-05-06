@@ -1,5 +1,6 @@
 package py.nl.AutoCrud.components;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
@@ -36,6 +37,7 @@ public class SearchTextField<T> extends JPanel implements SearchViewListener {
 		textField = new JTextField();
 		add(textField);
 		textField.setColumns(10);
+		textField.setEditable(false);
 
 		btnOpenSearchView = new JButton("");
 		btnOpenSearchView.setIcon(new ImageIcon(SearchTextField.class.getResource("/img/search_16.png")));
@@ -97,5 +99,26 @@ public class SearchTextField<T> extends JPanel implements SearchViewListener {
 	@Override
 	public void onSelect(Object obj) {
 		setValue((T) obj);
+	}
+
+	@Override
+	public void requestFocus() {
+		btnOpenSearchView.requestFocus();
+	}
+
+	@Override
+	public void setBackground(Color bg) {
+		if (textField != null)
+			textField.setBackground(bg);
+		else
+			super.setBackground(bg);
+	}
+
+	@Override
+	public Color getBackground() {
+		if (textField != null)
+			return textField.getBackground();
+		else
+			return super.getBackground();
 	}
 }

@@ -16,7 +16,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.hibernate.exception.ConstraintViolationException;
 
-import py.nl.AutoCrud.annotations.Input;
 import py.nl.AutoCrud.annotations.RequiredInput;
 import py.nl.AutoCrud.components.SearchTextField;
 import py.nl.AutoCrud.dao.AutoDAO;
@@ -24,7 +23,6 @@ import py.nl.AutoCrud.enums.Components;
 import py.nl.AutoCrud.util.FormUtil;
 import py.nl.AutoCrud.util.GetterAndSetterUtil;
 import py.nl.AutoCrud.util.MessageUtil;
-import py.nl.AutoCrud.util.TextUtil;
 import py.nl.AutoCrud.util.WraperUtil;
 import py.nl.AutoCrud.view.AutoCRUD;
 import py.nl.AutoCrud.view.GenericTableModel;
@@ -70,7 +68,7 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 		FormUtil.enableInputs(crud.getForm(), !b);
 		FormUtil.enableInputs(crud.getToolbarA(), b);
 		FormUtil.enableInputs(crud.getToolbarB(), !b);
-		
+		crud.getTable().setEnabled(b);
 	}
 
 	
@@ -145,19 +143,10 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 	private T fillData(T obj) throws Exception {
 		for (int i = 0; i < inputs.size(); i++) {
 			Field field = crud.getField(inputs.get(i).getName());
-			Input inputAnnotation = field.getAnnotation(Input.class);
 			RequiredInput requiredInput = field.getAnnotation(RequiredInput.class);
 			
-			
-			String label;
-			if(inputAnnotation==null || inputAnnotation.label().isEmpty()){
-				label = TextUtil.generateLabel(field.getName());
-			}else {
-				label = inputAnnotation.label().toUpperCase();
-			}
-			
 			if (requiredInput!=null && FormUtil.isEmpty(inputs.get(i))) {
-				MessageUtil.error(label+" is required", crud);
+				FormUtil.requiredFieldWarning(inputs.get(i));
 				throw new RuntimeException();
 			}
 			
