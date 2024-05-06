@@ -108,7 +108,11 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 				filter();
 				clear();
 			} catch (Exception e) {
-				MessageUtil.error("The item cannot be deleted; it may be in use.", crud);
+				if (e.getClass() == ConstraintViolationException.class) {
+					MessageUtil.error("The item cannot be deleted; it may be in use.", crud);
+				}else{
+					MessageUtil.error("An error occurred while trying to delete this item", crud);
+				}
 			}
 		}
 	}
@@ -128,7 +132,6 @@ public class AutoController <T> implements ActionListener, ListSelectionListener
 			filter();
 			clear();
 		} catch (Exception e) {
-			e.printStackTrace();
 			Throwable exc = e.getCause();
 			if (exc.getClass() == ConstraintViolationException.class) {
 				MessageUtil.error(exc.getCause().getMessage(), crud);
