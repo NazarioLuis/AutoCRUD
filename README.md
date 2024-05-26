@@ -152,7 +152,7 @@ public class City {
 #### `@EntityCRUD`
 - `title`: Specifies the title of the CRUD (Create, Read, Update, Delete) interface generated for the entity. It typically appears at the top of the interface, providing a clear indication of what kind of records the interface deals with.
 - `formTitle`: Sets the title of the form or dialog used for adding or editing records. It appears as the title of the window or section where users input or modify data.
-- `columnCount`: Determines the number of columns used for displaying records in the table view of the CRUD interface. It helps in organizing and presenting data more efficiently, especially when dealing with a large number of fields.
+- `columnCount`: Determines the number of columns used for displaying the form in the CRUD interface. It helps in organizing and presenting form fields more efficiently, especially when dealing with forms with many fields.
 - `width`: Specifies the width of the CRUD interface window as a percentage of the screen width. It allows customization of the interface's size to fit different screen resolutions and user preferences.
 - `height`: Defines the height of the CRUD interface window as a percentage of the screen height. It enables adjusting the interface's vertical size according to the content and usability requirements.
 
