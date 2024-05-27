@@ -48,7 +48,8 @@ public class IntTextField extends JTextField implements KeyListener {
 	}
 	
 	public void setValue(Integer i) {
-		setValue(i);
+		if(i == null) this.setText("0");
+		else this.setText(i+"");
 	}
 	
 	public Long getLongValue(){
