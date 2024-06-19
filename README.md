@@ -47,6 +47,12 @@ hibernate.show_sql=true
 hibernate.hbm2ddl.auto=update
 mapping_packages=package_name.entities
 ```
+The mapping_packages configuration in Hibernate setup serves to specify the packages that Hibernate should scan for entity classes. When Hibernate initializes its persistence environment, it needs to know which classes represent entities in the database to map them correctly.
+```properties
+mapping_packages=com.example.package1.entities, com.example.package2.entities
+```
+
+In this configuration, Hibernate will scan both com.example.package1.entities and com.example.package2.entities packages for entity classes. Any Java class annotated with @Entity and residing in either of these packages will be considered an entity and mapped accordingly to the database tables.
 ## 3. Definition of Entity Classes
 
 To utilize the graphical interface generation functionality, define your entity classes representing tables in your database. Annotations can be applied to these classes and their fields to customize the behavior and appearance of the generated interfaces.
